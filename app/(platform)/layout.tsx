@@ -1,6 +1,10 @@
 import { ClerkProvider } from "@clerk/nextjs";
 
-function PlatformLayout({ children }: { children: React.ReactNode }) {
+export default function PlatformLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ClerkProvider
       afterSignOutUrl={"/"}
@@ -11,5 +15,3 @@ function PlatformLayout({ children }: { children: React.ReactNode }) {
     </ClerkProvider>
   );
 }
-
-export default PlatformLayout;

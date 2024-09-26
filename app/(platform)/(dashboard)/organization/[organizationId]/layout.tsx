@@ -1,6 +1,10 @@
 import OrgControl from "./_components/org-control";
 
-function OrganizationIdLayout({ children }: { children: React.ReactNode }) {
+export default function OrganizationIdLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <OrgControl />
@@ -8,5 +12,3 @@ function OrganizationIdLayout({ children }: { children: React.ReactNode }) {
     </>
   );
 }
-
-export default OrganizationIdLayout;
