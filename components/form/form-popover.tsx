@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { FormInput } from "./form-input";
+import { FormPicker } from "./form-picker";
 import { FormSubmit } from "./form-submit";
 
 interface FormPopoverProps {
@@ -60,6 +61,7 @@ export const FormPopover = ({
         </PopoverClose>
         <form action={onSubmit} className="space-y-4">
           <div className="space-y-4">
+            <FormPicker id="image" errors={fieldErrors} />
             <FormInput
               id="title"
               label="Board title"
