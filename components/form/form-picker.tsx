@@ -1,44 +1,43 @@
-"use client";
-
 import { defaultImages } from "@/constants/images";
-import { unplash } from "@/lib/unsplash";
+import { unsplash } from "@/lib/unsplash";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { FormErrors } from "./form-errors";
 
-interface FormPickerProps {
+interface IFormPickerProps {
   id: string;
   errors?: Record<string, string[] | undefined>;
 }
 
-export const FormPicker = ({ id, errors }: FormPickerProps) => {
+export const FormPicker = ({ id, errors }: IFormPickerProps) => {
+  const [images, setImages] = useState<Array<Record<string, any>>>([]);
+  const [isLoading, setIsloading] = useState(true);
+  const [selectedImgId, setSelectedImgId] = useState(null);
   const { pending } = useFormStatus();
-  const [images, setImages] =
-    useState<Array<Record<string, any>>>(defaultImages);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedImageId, setSelectedImageId] = useState(null);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const result = await unplash.photos.getRandom({
+        const result = await unsplash.photos.getRandom({
           collectionIds: ["317099"],
           count: 9,
         });
         if (result && result.response) {
-          const newImages = result.response as Array<Record<string, any>>;
-          setImages(newImages);
+          const responseImages = result.response as Array<Record<string, any>>;
+          setImages(responseImages);
         } else {
-          console.error("Failed to get images from Unsplash");
+          setImages(defaultImages);
+          console.error("Failed to get images from Unsplash.");
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
         setImages(defaultImages);
       } finally {
-        setIsLoading(false);
+        setIsloading(false);
       }
     };
     fetchImages();
@@ -64,25 +63,41 @@ export const FormPicker = ({ id, errors }: FormPickerProps) => {
             )}
             onClick={() => {
               if (pending) return;
-              setSelectedImageId(image.id);
+              setSelectedImgId(image.id);
             }}
           >
+            <input
+              type="radio"
+              id={id}
+              name={id}
+              className="hidden"
+              disabled={pending}
+              onChange={() => 0}
+              checked={selectedImgId === image.id}
+              value={`${image.id}|${image.urls.thumb}|${image.urls.full}|${image.urls.html}|${image.user.name}`}
+            />
+            {selectedImgId === image.id && (
+              <div className="absolute top-0  h-full w-full bg-black/30 flex items-center justify-center z-10">
+                <Check className="h-4 w-4 text-white" />
+              </div>
+            )}
             <Image
-              src={image.urls.thumb}
               fill
               alt="Unsplash image"
+              src={image.urls.thumb}
               className="object-cover rounded-sm"
             />
             <Link
               href={image.links.html}
               target="_blank"
-              className="opacity-0 group-hover:opacity-100 absolute bottom-0 w-full text-[10px] truncate text-white hover:underline p-1 bg-black/50"
+              className="opacity-0 group-hover:opacity-100 w-full absolute bottom-0 text-[8px] truncate text-white hover:underline p-1 bg-black/50 z-20"
             >
               {image.user.name}
             </Link>
           </div>
         ))}
       </div>
+      <FormErrors id="image" errors={errors} />
     </div>
   );
 };
