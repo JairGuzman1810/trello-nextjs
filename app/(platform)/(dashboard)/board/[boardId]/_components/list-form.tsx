@@ -1,16 +1,21 @@
 "use client";
 
+import { createList } from "@/actions/create-list";
 import { FormInput } from "@/components/form/form-input";
 import { FormSubmit } from "@/components/form/form-submit";
 import { Button } from "@/components/ui/button";
+import { useAction } from "@/hooks/use-action";
 import { Plus, X } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ElementRef, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
 import { ListWrapper } from "./list-wrapper";
 
 export const ListForm = () => {
+  const router = useRouter();
   const params = useParams();
+
   const formRef = useRef<ElementRef<"form">>(null);
   const inputRef = useRef<ElementRef<"input">>(null);
 
@@ -28,6 +33,17 @@ export const ListForm = () => {
     setIsEditing(false);
   };
 
+  const { execute, fieldErrors } = useAction(createList, {
+    onSuccess: (data) => {
+      toast.success(`List "${data.title}" created`);
+      disableEditing();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
       disableEditing();
@@ -37,15 +53,23 @@ export const ListForm = () => {
   useEventListener("keydown", onKeyDown);
   useOnClickOutside(formRef, disableEditing);
 
+  const onSubmit = (formData: FormData) => {
+    const title = formData.get("title") as string;
+    const boardId = formData.get("boardId") as string;
+    execute({ title, boardId });
+  };
+
   if (isEditing) {
     return (
       <ListWrapper>
         <form
+          action={onSubmit}
           ref={formRef}
           className="w-full p-2 rounded-md bg-white space-y-4 shadow-md"
         >
           <FormInput
             id="title"
+            errors={fieldErrors}
             ref={inputRef}
             className="text-sm px-2 py-1 h-7 border-transparent font-medium hover:border-input focus-within:border-input transition"
             placeholder="Enter list title..."
