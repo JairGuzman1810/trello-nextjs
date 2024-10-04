@@ -67,6 +67,7 @@ export const BoardTitleForm = ({ data }: BoardTitleFormProps) => {
       </form>
     );
   }
+
   return (
     <Button
       onClick={enableEditing}
