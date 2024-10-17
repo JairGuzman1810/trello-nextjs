@@ -25,13 +25,13 @@ export const Description = ({ data }: DescriptionProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const formRef = useRef<ElementRef<"form">>(null);
-  const textareRef = useRef<ElementRef<"textarea">>(null);
+  const textareaRef = useRef<ElementRef<"textarea">>(null);
 
   const enableEditing = () => {
     setIsEditing(true);
     setTimeout(() => {
-      textareRef.current?.focus();
-      textareRef.current?.select();
+      textareaRef.current?.focus();
+      textareaRef.current?.select();
     });
   };
 
@@ -74,7 +74,7 @@ export const Description = ({ data }: DescriptionProps) => {
         {isEditing ? (
           <form action={onSubmit} ref={formRef} className="space-y-2">
             <FormTextarea
-              ref={textareRef}
+              ref={textareaRef}
               id="description"
               className="w-full mt-2"
               placeholder="Add a more detailed description..."

@@ -5,6 +5,7 @@ import { fetcher } from "@/lib/fetcher";
 import { CardWithList } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent } from "../ui/dialog";
+import { Actions } from "./actions";
 import { Description } from "./description";
 import { Header } from "./header";
 
@@ -31,6 +32,7 @@ export const CardModal = () => {
               )}
             </div>
           </div>
+          {!cardData ? <Actions.Skeleton /> : <Actions data={cardData} />}
         </div>
       </DialogContent>
     </Dialog>
